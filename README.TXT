@@ -18,3 +18,5 @@ STEP 4: Login credentials for application:
 
   Admin username: admin   password: csc330sp22
   Regular user:   user    password: csc330sp22
+  
+Testing

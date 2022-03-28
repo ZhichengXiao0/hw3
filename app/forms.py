@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField, StringField, PasswordField
+from wtforms import RadioField, StringField, IntegerField, SubmitField, StringField, PasswordField
 from wtforms.validators import DataRequired
 
 class AddForm(FlaskForm):
@@ -25,3 +25,11 @@ class ChangePasswordForm(FlaskForm):
     new_pass = PasswordField('New password', validators=[DataRequired()])
     new_pass_retype = PasswordField('Retype new password', validators=[DataRequired()])
     submit = SubmitField('Change password')
+
+class AddUserForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    role = RadioField('role',
+                       choices=['Beginner', 'Intermediate', 'Advanced'],
+                       validators=[DataRequired()])
+    submit = SubmitField('Add User')

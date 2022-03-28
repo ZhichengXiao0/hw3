@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from app.forms import AddForm, DeleteForm, SearchForm, LoginForm, ChangePasswordForm
+from app.forms import AddForm, DeleteForm, SearchForm, LoginForm, ChangePasswordForm, AddUserForm
 from app import db
 from app.models import City, User
 import sys
@@ -76,6 +76,38 @@ def add_record():
         form.population.data = ''
         return redirect(url_for('add_record'))
     return render_template('add.html', form=form)
+
+# Adding a user requires that a user be logged in AND is an admin
+@app.route('/add_user', methods=['GET', 'POST'])
+@login_required
+def admin_add():
+    # Verifying that user is an admin
+    if is_admin():
+        form = AddUserForm()
+        if form.validate_on_submit():
+            # Extract values from form
+            user_name = form.username.data
+            user_password = form.password.data
+            user_role = form.role.data
+
+            # Query DB for matching record (we'll grab the first record in case
+            # there's more than one).
+            add_search = db.session.query(User).filter_by(username = form.username.data).first()
+
+            # If record is found delete from DB table and commit changes
+            if add_search is not None:
+            # Create a city record to store in the DB
+                b = City(username=user_name, password=user_password, role=user_role)           
+            # add record to table and commit changes
+                db.session.add(b)
+                db.session.commit()
+
+            form.username.data = ''
+            form.password.data = ''
+            form.role.data = ''
+            return redirect(url_for('admin_add'))
+        return render_template('add_user.html', form=form)
+
 
 # Adding a city requires that a user be logged in AND is an admin
 @app.route('/delete', methods=['GET', 'POST'])
